@@ -1,0 +1,21 @@
+{
+  "id": "manual_source",
+  "publisher": "unique_publisher",
+  "label": "Dated overall list",
+  "url": "https://example.com/replace-with-source-url",
+  "published_at": "2026-10-21",
+  "season": "2026-27",
+  "scoring_format": "nine_category",
+  "horizon": "rest_of_season",
+  "rank_scope": "overall",
+  "coverage": "manual_export",
+  "notes": "Replace with verified scoring, date, methodology and coverage. This one-row example is not a real ranking.",
+  "rows": [
+    {
+      "player_id": "nba:05uiu",
+      "player_name": "Jalen Johnson",
+      "position": "PF",
+      "original_rank": 1
+    }
+  ]
+}
