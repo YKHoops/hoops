@@ -1,3 +1,18 @@
+# Weekly refresh · October 26, 2026
+
+This section supersedes dated coverage below. Recurring validated publication is authorized to YKHoops/hoops, `main` / `docs`; the blue/white design is unchanged.
+
+- **Target and rosters:** public league settings verify `noz9r7uxmphcb74p`, season 2026–27, unchanged team IDs and YK scoring. 244 unique roster players across ten teams (previously 233). The reviewed run is selected explicitly by private `target/approved_run.json`; failed/newer unreviewed runs cannot silently become build inputs. Owner mappings and the October 21 verified roster rules are retained; no rollover ID or owner discovery is inferred.
+- **NBA results:** 400 players across 43 completed regular-season games, through October 25 in America/New_York (previously 68 / 3). Refreshed October 20–25 with the one-day correction overlap and bounded requests. Every collected game's player points reconcile to both official team scores. A confirmed coach-decision nonparticipant with `MIN=--` is excluded without adding GP; other missing-minute rows still fail validation. The first rejected refresh retained the prior snapshot.
+- **League results:** Week 1's five matchups reconcile to official wins, losses, ties, points for and points against. Total historical/current coverage is 65 completed regular-season periods / 325 matches. Week 2 is explicitly in progress; future 0–0 placeholders do not become ties. Displayed coverage and current-period labels now come from data.
+- **Rankings:** promoted October 26 Smart Draft Board top-25 and Hashtag 30-player ROS preview, keeping the custom-category list and derived YK model separate. 9cat's revised final four ranks retain its October 14 publication date. Dizzle, NBC, RotoWire, Hashtag dynasty and all 1,287 Fantrax projection rows were compared; unchanged lists retain their original freshness. Fantrax's 574-player model remains capture-only dated October 21 and covers 242/244 current roster players. Dynasty category coverage is 244/244. Manual ALL ACCESS/Lawson lists remain dated historical sources. Prior blocked discovery was not repeated.
+- **Trades and uncertainty:** current executed-trade view is unchanged (31 current-season rows); canonical combined transfers remain 390 and reconciled legacy/workbook events remain 146. Claims/drops, pre-2022 results, historical operators and conditional/original pick outcomes remain incomplete. No new ownership or pick outcomes are inferred.
+- **Validation:** 32 Python and 16 JavaScript checks pass, plus changed-JavaScript syntax checks. October 21 fixed counts remain baseline regressions, with additional source-reconciled roster/game/period checks. Desktop (1280px) standings and NBA filters, phone (390px) team filter and bubble detail dialog checked without page overflow. Source/horizon coverage, unique roster totals and score-proportional bubble area remain validated. Private evidence, raw authenticated captures and regression snapshots stay outside public assets and GitHub.
+
+Run evidence and publication receipt: `yk_working_copy/private/weekly_runs/2026-10-26/`. Next NBA refresh starts October 25 for one-day overlap, through the previous New York calendar day, in batches of at most seven dates. Continue using the existing offline rebuild after reviewing/promoting inputs. Do not rerun dated bootstrap ranking import scripts over these newer snapshots.
+
+---
+
 # Dashboard repair review · October 21, 2026
 
 Local implementation: `yk_working_copy/`. GitHub review copy: `yk_github/`. Publication authorized by the user on October 21, 2026; this is the approved repair release. The approved buildless blue/white interface and graphics remain in place.

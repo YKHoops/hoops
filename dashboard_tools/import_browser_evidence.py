@@ -4,6 +4,7 @@ Capture files are private. Only validated basketball fields enter public bundles
 """
 import json,re,hashlib,csv
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from collections import defaultdict
 from workspace import ROOT
 from collection_state import atomic_json
@@ -14,6 +15,10 @@ def number(x):return None if x.strip() in ('','-') else float(x.replace(',','').
 def player_id(row,identity):
     match=re.search(r'/hs([a-z0-9]+)_',row.get('image') or '')
     return 'nba:'+match[1] if match else identity.resolve(row['name'])
+def period_bounds(label):
+    match=re.fullmatch(r'\((\w{3} \w{3} \d{1,2}, \d{4}) - (\w{3} \w{3} \d{1,2}, \d{4})\)',label or '')
+    if not match:raise ValueError('Unrecognized period dates')
+    return tuple(datetime.strptime(x,'%a %b %d, %Y').date() for x in match.groups())
 def stat_rows(kind):
     files=sorted(P.glob(kind+'-[123].json'))
     if len(files)!=3:raise ValueError('Need all three captured player pages: '+kind)
@@ -65,18 +70,23 @@ def build():
     results={};standings={};sources=[];live=[]
     for p in sorted(P.glob('*-results-blocks.json')):
         raw=read(p);season=raw['season'];period=None;date_label=None;rows=[]
+        capture_day=datetime.fromisoformat(raw['captured_at'].replace('Z','+00:00')).astimezone(ZoneInfo('America/New_York')).date()
+        last_end=None
         for b in raw['blocks']:
             if b['tag']=='H4' and re.fullmatch(r'Scoring Period \d+',b['text']):period=int(b['text'].split()[-1])
             elif b['tag']=='H5' and period:date_label=b['text']
             elif b['tag']=='TABLE' and period:
+                start,end=period_bounds(date_label);last_end=end
                 for r in b['rows']:
                     if len(r)!=4 or not r[0]['links'] or not r[2]['links']:continue
                     a,h=owner(r[0]['text']),owner(r[2]['text']);av,hv=number(r[1]['text']),number(r[3]['text'])
                     if av is None or hv is None:raise ValueError('Missing result')
-                    rows.append({'period':period,'away_team':r[0]['text'],'home_team':r[2]['text'],'away_owner':a,'home_owner':h,'away_score':av,'home_score':hv,'winner':a if av>hv else h if hv>av else None,'status':'completed','date_label':date_label})
+                    match={'period':period,'away_team':r[0]['text'],'home_team':r[2]['text'],'away_owner':a,'home_owner':h,'away_score':av,'home_score':hv,'winner':a if av>hv else h if hv>av else None,'status':'completed','date_label':date_label}
+                    if end<capture_day:rows.append(match)
+                    elif start<=capture_day<=end and season=='2026-27':live.append({**match,'winner':None,'status':'in_progress'})
         periods=sorted({r['period'] for r in rows})
-        if periods!=list(range(1,max(periods)+1)) or len(rows)!=5*len(periods):raise ValueError('Incomplete result grid')
-        results[season]={'matchups':rows,'periods_available':periods,'source':raw['url'],'captured_at':raw['captured_at'],'complete_regular_season':True,'note':'All displayed completed regular-season results; excludes playoff rounds.'}
+        if not periods or periods!=list(range(1,max(periods)+1)) or len(rows)!=5*len(periods):raise ValueError('Incomplete result grid')
+        results[season]={'matchups':rows,'periods_available':periods,'source':raw['url'],'captured_at':raw['captured_at'],'complete_regular_season':last_end<capture_day,'note':'Completed regular-season results through the captured date; current/future periods and playoff rounds excluded.'}
     for p in sorted(P.glob('*-regular-blocks.json')):
         raw=read(p);season=raw['season'];blocks=raw['blocks'];names=next(b['text'].splitlines() for b in blocks if b['tag']=='ASIDE' and b['text'].startswith('1\n'));table=next(b['rows'] for b in blocks if b['tag']=='TABLE');rows=[]
         assert len(names)==20 and len(table)==10
@@ -91,7 +101,7 @@ def build():
                 wins=sum(m['winner']==r['owner_real_name'] for m in games)
                 if pts!=r['pts'] or against!=r['points_against'] or wins!=r['w'] or len(games)!=r['w']+r['l']+r['t']:raise ValueError('Weekly/YTD reconciliation failed: '+season+' '+r['team_name'])
         standings[season]={'rows':rows,'captured_at':raw['captured_at'],'source':raw['url']}
-        if season=='2026-27':
+        if season=='2026-27' and season not in results:
             for b in blocks:
                 if b['tag']=='TABLE':
                     for r in b['rows']:

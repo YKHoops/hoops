@@ -20,6 +20,9 @@ def from_game(d):
         for a in block['athletes']:
             if a.get('didNotPlay') or not a.get('stats'):continue
             v=dict(zip(labels,a['stats'])); t={}
+            # ESPN occasionally marks a coach-decision nonparticipant didNotPlay=false.
+            # Require all three independent signals; unknown minutes for any other row still fails.
+            if v.get('MIN')=='--' and a.get('active') is False and a.get('reason')=="COACH'S DECISION" and all(v.get(k)=='0' for k in ['PTS','REB','AST','STL','BLK','TO']) and all(v.get(k)=='0-0' for k in ['FG','3PT','FT']):continue
             for src,out in [('PTS','pts'),('REB','reb'),('AST','ast'),('STL','stl'),('BLK','blk'),('TO','tov')]: t[out]=float(v[src])
             t['min']=sum(float(x)/60**i for i,x in enumerate(v['MIN'].split(':')))
             for src,m,at in [('FG','fgm','fga'),('3PT','fg3m','fg3a'),('FT','ftm','fta')]:t[m],t[at]=map(float,v[src].split('-'))
@@ -29,7 +32,8 @@ def from_game(d):
     return rows
 
 def build():
-    settings=json.loads((ROOT/'private/target/runs/2026-10-21T17-04-30.964717+00-00/getLeagueInfo.json').read_text())['scoringSystem']['scoringCategories']['PLAYER']
+    from build_dashboard import CURRENT
+    settings=json.loads((CURRENT/'getLeagueInfo.json').read_text())['scoringSystem']['scoringCategories']['PLAYER']
     aliases={'ST':'stl','TO':'tov','3PTM':'fg3m'}
     verified={aliases.get(k,k.lower()):float(v['Default'].replace('points','')) for k,v in settings.items()}
     if verified!=WEIGHTS:raise ValueError('YK scoring changed; review formula before rebuilding results')
@@ -47,7 +51,7 @@ def build():
     evidence=ROOT/'private/nba_evidence'; snapshots={}; game_ids=defaultdict(set); totals=defaultdict(dict)
     for p in sorted(evidence.glob('game_*.json')):
         d=json.loads(p.read_text());header=d['header']; season=header['season']['year'];season=f'{int(season)-1}-{str(season)[-2:]}'
-        if header['season'].get('type')!=2:continue
+        if header['season'].get('type')!=2 or not header['competitions'][0]['status']['type']['completed']:continue
         gid=str(header['id']); date=datetime.fromisoformat(header['competitions'][0]['date'].replace('Z','+00:00')).astimezone(ZoneInfo('America/New_York')).date().isoformat()
         game_ids[season].add(gid)
         snapshots[gid]={'url':'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event='+gid,'date':date,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}

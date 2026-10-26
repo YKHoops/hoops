@@ -13,7 +13,9 @@ SOURCE = ROOT / 'source/yk/docs/data'
 SAVED = ROOT / 'private/saved'
 TARGET = ROOT / 'private/target'
 # Reviewed public run; subsequent failed discovery cannot replace this input.
-CURRENT = TARGET / 'runs/2026-10-21T17-04-30.964717+00-00'
+approved = TARGET / 'approved_run.json'
+CURRENT = TARGET / (json.loads(approved.read_text())['path'] if approved.exists() else 'runs/2026-10-21T17-04-30.964717+00-00')
+if CURRENT.resolve().parent != (TARGET/'runs').resolve(): raise ValueError('Approved run must be a retained target run')
 MANIFEST = []
 
 
