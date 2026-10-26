@@ -1,0 +1,7 @@
+{
+  "2025-26": {
+    "complete_regular_season": true,
+    "snapshot_sha256": "a894fb1e78ff78eec7a1c60f8aa2c44c80e928fbc2db874ecdb61c4e8da3453a",
+    "evidence": "October 21 authenticated Fantrax 2025\u201326 completed regular-season counting totals; 575 positive-GP rows, all scoring inputs reconciled. See REPAIR_NOTES.md and source/context/fantrax_nba_2025.json."
+  }
+}

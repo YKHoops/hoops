@@ -151,7 +151,10 @@ def build(include_repairs=True):
                               'w': number('win'), 'l': number('loss'), 't': number('tie'),
                               'win_pct': number('winpc'), 'points_against': against})
     trade_events = []
-    for index, t in enumerate(read(SOURCE / 'trades.json')):
+    from trade_registry import assign
+    trade_source = read(SOURCE / 'trades.json')
+    trade_ids = assign('legacy', trade_source, 'yk-trade-')
+    for index, t in enumerate(trade_source):
         assets = []
         sides = []
         for side in ['give', 'get']:
@@ -168,7 +171,7 @@ def build(include_repairs=True):
         if clear:
             for a in assets: a['recipient'] = next(x for x in parties if x != a['sender'])
         # Multi-party / inconsistent prefixes stay explicit, never assigned to a guessed recipient.
-        event = {'event_id': 'yk-trade-' + str(index), 'source_index': index, 'year': season_id(t['season']), 'date_iso': t.get('date'),
+        event = {'event_id': trade_ids[index], 'source_index': index, 'year': season_id(t['season']), 'date_iso': t.get('date'),
                  'parties': parties, 'assets': assets, 'route_status': 'two_party_record' if clear else 'recipient_unresolved',
                  'trade_type_label': 'Players + picks' if {a['type'] for a in assets} == {'player','pick'} else 'Picks' if all(a['type']=='pick' for a in assets) else 'Players',
                  'source': 'Saved YK trade log', 'fantrax_confirmed': bool(t.get('fantrax_confirmed'))}

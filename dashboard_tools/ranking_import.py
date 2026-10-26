@@ -43,13 +43,15 @@ def promote(source, root=ROOT):
     source['rows']=[{k:v for k,v in row.items() if k in {'player_id','player_name','position','original_rank','identity_status','source_original_rank','projected_fp_pg','projection_inputs'}} for row in source['rows']]
     source['imported_at']=source.get('imported_at') or datetime.now(timezone.utc).isoformat()
     source['list_size']=len(source['rows']);source['max_rank']=max(r['original_rank'] for r in source['rows'])
-    encoded=json.dumps(source,sort_keys=True,ensure_ascii=False).encode()
-    checksum=hashlib.sha256(encoded).hexdigest()
     current=root/'source/rankings'/f"{source['id']}.json"
     if current.exists():
         old=json.loads(current.read_text())
         if source['published_at'] < old['published_at']: raise ValueError('Would replace a newer source snapshot')
         if len(source['rows']) < len(old['rows'])*.8: raise ValueError('Unexpected coverage shrink; review as a separate source ID')
+    if current.exists() and {k:v for k,v in old.items() if k!='imported_at'}=={k:v for k,v in source.items() if k!='imported_at'}:
+        return old
+    encoded=json.dumps(source,sort_keys=True,ensure_ascii=False).encode()
+    checksum=hashlib.sha256(encoded).hexdigest()
     atomic_json(root/'private/ranking_snapshots'/source['id']/(checksum+'.json'),source)
     atomic_json(current,source)
     return source

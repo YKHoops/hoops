@@ -73,6 +73,10 @@ def build():
     full_baseline=ROOT/'source/context/fantrax_nba_2025.json'
     if full_baseline.exists():seasons['2025-26']=json.loads(full_baseline.read_text())
     bundle={'schema_version':1,'built_at':datetime.now(timezone.utc).isoformat(),'default_season':max(seasons),'weights':WEIGHTS,'seasons':seasons,'game_sources':snapshots,'season_status':{'season':'2026-27','opening_date':'2026-10-20','url':'https://pr.nba.com/2026-27-nba-regular-season-schedule','status':f'Regular season has begun; {len(game_ids["2026-27"])} final games collected.'}}
+    previous=ROOT/'docs/data/nba_stats.json'
+    if previous.exists():
+        old=json.loads(previous.read_text())
+        if {k:v for k,v in old.items() if k!='built_at'}=={k:v for k,v in bundle.items() if k!='built_at'}:bundle['built_at']=old.get('built_at')
     checksum=hashlib.sha256(json.dumps(bundle,sort_keys=True).encode()).hexdigest();atomic_json(ROOT/'private/nba_snapshots'/(checksum+'.json'),bundle);atomic_json(ROOT/'docs/data/nba_stats.json',bundle)
     print({s:len(d['rows']) for s,d in seasons.items()})
 if __name__=='__main__':build()

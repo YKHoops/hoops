@@ -39,6 +39,8 @@ def build():
             reconciled.append({'event_id':candidates[0]['event_id'],'duplicate_event_ids':[t['event_id'] for t in candidates[1:]],'date':dt,'observations':[r['id'] for r in rows],'basis':'Exact player set and party pair; pick descriptions retained independently'})
         else:
             events.append({'event_id':'csv-event-'+rows[0]['id'][4:],'source_index':None,'year':season,'date_iso':dt[:10],'parties':list(parties),'assets':assets,'route_status':'explicit_csv_routes','trade_type_label':'Players + picks' if any(a['type']=='pick' for a in assets) else 'Players','source':'Fantrax CSV transfers grouped by timestamp and pair; transaction ID unavailable','fantrax_confirmed':True})
+    from trade_registry import assign
+    workbook_ids=assign('workbook',d['context']['recent_trades'],'workbook-2026-')
     for i,t in enumerate(d['context']['recent_trades']):
         assets=[];sides=[]
         for side in ['give','get']:
@@ -51,7 +53,7 @@ def build():
         parties=sorted(set.union(*sides));clear=len(parties)==2 and all(len(s)==1 for s in sides) and not sides[0]&sides[1] and all(a['sender'] for a in assets)
         if clear:
             for a in assets:a['recipient']=next(o for o in parties if o!=a['sender'])
-        events.append({'event_id':'workbook-2026-'+str(i),'source_index':i,'year':'2026-27','date_iso':t['date'],'parties':parties,'assets':assets,'route_status':'two_party_record' if clear else 'recipient_unresolved','trade_type_label':'Players + picks' if any(a['type']=='pick' for a in assets) else 'Players','source':'YK Dynasty Basketball.xlsx · '+t['sheet']+' '+t['source_range'],'fantrax_confirmed':False})
+        events.append({'event_id':workbook_ids[i],'source_index':i,'year':'2026-27','date_iso':t['date'],'parties':parties,'assets':assets,'route_status':'two_party_record' if clear else 'recipient_unresolved','trade_type_label':'Players + picks' if any(a['type']=='pick' for a in assets) else 'Players','source':'YK Dynasty Basketball.xlsx · '+t['sheet']+' '+t['source_range'],'fantrax_confirmed':False})
     schedules={}
     for p in sorted((ROOT/'private/saved').glob('*/getLeagueInfo.json'))+sorted((ROOT/'private/target/runs').glob('*/getLeagueInfo.json')):
         info=json.loads(p.read_text());s=f"{info['seasonYear']}-{str(info['seasonYear']+1)[-2:]}";rows=[]
