@@ -1,3 +1,18 @@
+# Trade feature integration · October 26, 2026
+
+Implemented locally from `TRADE_FEATURE_INTEGRATION_PLAN.md`; publication remains pending. The blue/white buildless shell is retained.
+
+- Persistent `source/context/trade_event_registry.json` preserves existing event URLs across source reordering and additions. Changed/removed source records and indistinguishable new duplicates require mapping review. The archive edition is pinned; 138 grade rows reconcile to 136 linked records and two duplicate aliases across 146 canonical events. Twenty-five archived rows retain uncertain side attribution.
+- `scripts/build_trade_evaluations.py` supplies one versioned contract for historical grades, repaired player improvement and observed NBA production. Historical fields are preserved; missing values remain unknown. Repaired grades retain F=0, require complete matching season evidence and all scoring inputs, and use the documented 10-GP minimum. Comparisons exclude mixed/pick-only and unresolved packages. Owner tables rank only samples with at least three eligible comparisons.
+- `grades.html` and the Trades navigation expose shared player/team/My Team, partner, season, asset, method, grade, archived-confidence and coverage filters. Detailed dialogs include linked players, original before/after inputs, eligibility reasons, observed production, isolated dated ranking/projection sources and archived pick paths. Team and player trade lists use the same badges. Existing archived report URLs still work.
+- **Evidence limit:** zero repaired comparisons currently qualify. Only the 2025–26 complete counting snapshot is certified; earlier snapshots are rounded with unverified completeness and 2026–27 is ongoing. Archived grades remain browsable, but new report-card GPA and model-gap rankings intentionally stay empty. All 138 original-pick outcomes remain unresolved; the displayed archived transfer associations do not certify protections, final holder or selected player.
+- `rebuild_public.py` builds in a temporary workspace and validates before promotion. Immutable evaluation URLs and checksums tie each dashboard to its result bundle; the dashboard moves last. Previous public outputs survive failed builds. Unchanged NBA and ranking inputs retain build/import timestamps; a repeat rebuild changed zero public files. No new endpoint discovery or authentication was needed.
+- Validation: 45 Python and 22 JavaScript tests pass. New cases cover stable IDs, duplicates, thresholds, zero/F grades, missing inputs, minimum samples, future seasons, historical operators, incomplete package comparisons, observed game deduplication, archive accounting, source freshness and failed-build preservation. Desktop 1280px and mobile 390px route checks passed with no page overflow or runtime errors. My Team/search/grade filters, modal focus return, historical/repaired/production/projection tabs and pick-path access were exercised. A separate missing-file preview confirmed the trade ledger and base dialog remain usable without evaluations.
+
+Review evidence: `private/trade_integration_before/` and `tests/artifacts/trade-integration/`. Review branch: `codex/trade-evaluations`. Do not automatically fold this feature branch into the weekly data-only main publication before the feature release is authorized. The published main release is still `2eabc09`.
+
+---
+
 # Weekly refresh · October 26, 2026
 
 This section supersedes dated coverage below. Recurring validated publication is authorized to YKHoops/hoops, `main` / `docs`; the blue/white design is unchanged.

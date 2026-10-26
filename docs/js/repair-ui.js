@@ -91,9 +91,7 @@ function mount(ctx){stop();document.querySelector('.repair-jumps')?.remove();C=c
  if(panels.length){const jumps=document.createElement('nav');jumps.className='repair-jumps';jumps.setAttribute('aria-label','Explore this page');jumps.innerHTML=panels.map((p,i)=>{p.id='evidence-panel-'+i;return `<a class="btn" href="#${p.id}">${h(p.querySelector('h2')?.textContent||'Explore')}</a>`;}).join('');const anchor=main.querySelector('.notice')||main.firstElementChild;anchor.after(jumps);}
 }
 function refreshTrade(){const slot=$('#repair-features');if(!slot)return;slot.innerHTML=tradeAnalytics();for(const id of ['nbaSeason','outcomeSeason'])bindSelect(id);}
-function tradeProduction(id){
- if(!C)return '';const t=C.D.trades.trade_events.find(t=>t.event_id===id);if(!t)return '';const season=statsSeason(),snap=C.D.nba_stats.seasons[season];
- return `<section class="section-space"><h3>Observed NBA production after this deal</h3><p class="status-line">${h(season)} collected games strictly after ${h(t.date_iso||'unknown date')}. This follows the traded player’s NBA production, not lineup credits or confirmed tenure. Same-day games are excluded when trade timing is uncertain.</p>${table(['Received by','Player','Collected games after deal','Calculated YK points'],t.assets.filter(a=>a.player_id).map(a=>{const r=snap.rows.find(r=>r.player_id===a.player_id),games=t.date_iso?(r?.game_stats||[]).filter(g=>g.date>t.date_iso):[],fp=games.length?games.reduce((n,g)=>n+Object.entries(C.D.nba_stats.weights).reduce((v,[k,w])=>v+g.stats[k]*w,0),0):null;return [h(a.recipient||'Unresolved'),C.playerLink(a.player_id,C.playerMap[a.player_id]?.player_name||a.label),games.length||'Unknown',n(fp)];}))}<p class="status-line">Source: ESPN final box scores. Earlier daily game histories are not loaded, so this is a partial observed window.</p></section>`;
-}
+function tradeProduction(id){return window.YKTradeUI?.detail(id)||'';}
+
 return {mount,profile,stop,refreshTrade,tradeProduction};
 })();
