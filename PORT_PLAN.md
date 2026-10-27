@@ -2,7 +2,7 @@
 
 The current interface now includes the shared grades explorer, detailed trade cards, profile badges, report-card selectors, separate observed production and source-specific rank/projection comparisons, and qualified pick paths. See `yk_working_copy/TRADE_FEATURE_INTEGRATION_PLAN.md` and `yk_working_copy/REPAIR_NOTES.md` for implementation and validation.
 
-All 138 archive rows are accounted for (136 linked, two duplicate aliases); 25 retain uncertain side attribution. Repaired grades require complete paired seasons and remain unassigned with current evidence. Original-pick outcomes remain unresolved. 45 Python and 22 JavaScript checks pass; desktop/mobile and missing-evaluation behavior are verified. The offline release is deterministic and retains the last valid output on failure. Local review branch only; main publication is pending.
+All 138 archive rows are accounted for (136 linked, two duplicate aliases); 25 retain uncertain side attribution. Repaired grades require complete paired seasons and remain unassigned with current evidence. Original-pick outcomes remain unresolved. 45 Python and 22 JavaScript checks pass; desktop/mobile and missing-evaluation behavior are verified. The offline release is deterministic and retains the last valid output on failure. The user authorized main / docs publication on October 27, 2026. Reviewed feature commits are `82a5172` and `89a370c`; the private publication receipt records the deployed release and live checks. Existing NBA data remains through October 25.
 
 ---
 

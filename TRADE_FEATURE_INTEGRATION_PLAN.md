@@ -2,7 +2,7 @@
 
 Restore the trade-analysis features inside the current blue-and-white, buildless dashboard. Reuse the existing trade ledger, navigation, filters, dialogs, team preference and player profiles. Add one versioned evaluation bundle that every page reads, so a deal has the same grade and explanation everywhere.
 
-Implementation completed locally October 26, 2026. Milestones 1–6 are implemented and validated within their evidence limits; repaired numeric grades and verified pick outcomes remain unavailable until qualifying evidence exists. Publication is pending. Detailed results are in REPAIR_NOTES.md. This plan records the implemented design. The [feature review](https://chatgpt.com/space/page_e20fa3e879ac81918c62b1ddbfc023ce) supplies the findings and pinned source links. The reviewed develop tip, `68ce780`, is already in main’s ancestry; selective adaptation is the integration path.
+Implementation completed locally October 26, 2026. Milestones 1–6 are implemented and validated within their evidence limits; repaired numeric grades and verified pick outcomes remain unavailable until qualifying evidence exists. The user authorized publication to `YKHoops/hoops` main / docs on October 27, 2026. Detailed results are in REPAIR_NOTES.md. This plan records the implemented design. The [feature review](https://chatgpt.com/space/page_e20fa3e879ac81918c62b1ddbfc023ce) supplies the findings and pinned source links. The reviewed develop tip, `68ce780`, is already in main’s ancestry; selective adaptation is the integration path.
 
 # Scope and first release
 
@@ -107,5 +107,4 @@ Implement milestones 1–4 in small commits: durable mappings, evaluation contra
 
 Develop in `yk_working_copy/` and retain the complete evidence there. After local review, copy approved public outputs to `yk_github/docs/` and necessary refresh changes to `yk_github/dashboard_tools/`; avoid activating the old root-level grading scripts. Update `PORT_PLAN.md` and `REPAIR_NOTES.md` with eligible coverage, method versions and remaining gaps.
 
-Extend the existing weekly refresh only after the new builder is validated. Recalculate when reviewed inputs change, preserve source dates, and publish substantive changes rather than timestamp churn. Keep a rollback commit and the previous matched output set. Implementation is staged on the local review branch. No deployment or automation configuration changes have been made.
-
+Extend the existing weekly refresh only after the new builder is validated. Recalculate when reviewed inputs change, preserve source dates, and publish substantive changes rather than timestamp churn. Keep a rollback commit and the previous matched output set. The reviewed implementation is authorized for the October 27 main / docs release. Retain the existing weekly automation configuration; its offline rebuild now includes the validated evaluator. Record deployment verification in the private publication receipt.
