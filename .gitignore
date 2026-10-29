@@ -7,3 +7,5 @@ scripts/.venv/
 scripts/errors.log
 docs/data/raw/
 *.xlsx
+
+.lineup-venv/

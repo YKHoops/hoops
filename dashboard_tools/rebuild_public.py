@@ -16,6 +16,10 @@ def stage_build():
     data=dashboard();publish_snapshot(ROOT/'docs/data/dashboard.json',data,ROOT/'private')
     bundle()
     finalize(ROOT)
+    if (ROOT/'private/lineup_snapshots/approved.json').exists():
+        import importlib.util
+        runtime=sys.executable if importlib.util.find_spec('scipy') else str(Path(__file__).resolve().parents[1]/'.lineup-venv/bin/python')
+        subprocess.run([runtime,str(Path(__file__).with_name('build_lineups.py'))],check=True)
 
 def finalize(root):
     from build_trade_evaluations import build,validate
@@ -49,7 +53,7 @@ def main():
             if stable(before)==stable(after):new.write_bytes(old.read_bytes())
         # Content-addressed evaluations arrive first. dashboard.json is the commit point;
         # old readers keep their old immutable evaluation URL throughout promotion.
-        paths=sorted((stage/'docs/data').rglob('*.json'),key=lambda p:p.name=='dashboard.json')
+        paths=sorted((stage/'docs/data').rglob('*.json'),key=lambda p:(p.name=='dashboard.json',p.name=='lineups.json',str(p)))
         backup=ROOT/'private/trade_releases'/hashlib.sha256((ROOT/'docs/data/dashboard.json').read_bytes()).hexdigest()
         backup.mkdir(parents=True,exist_ok=True)
         changed=[]
