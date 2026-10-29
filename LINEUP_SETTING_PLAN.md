@@ -1,6 +1,6 @@
 # Lineup setting feature plan
 
-Planning date: October 29, 2026. Status: current-roster first release implemented locally; acquisition planning, wider history and execution remain later milestones. See [implementation notes](LINEUP_SETTING_README.md). No Fantrax roster changes or website publication. Paths below are relative to `yk_working_copy/`.
+Planning date: October 29, 2026. Status: current-roster planning implemented for all ten teams, current week plus four future weeks, with player usage charts, weekly starts and local roster preferences; acquisition planning, wider history and execution remain later milestones. See [implementation notes](LINEUP_SETTING_README.md). Published as a static dashboard; no Fantrax roster changes. Paths below are relative to `yk_working_copy/`.
 
 **Verified during implementation:** Fantrax Min/Max shows period 3 (November 2–8) at **29–48 GP**, despite seven calendar days. Period 2 is **35–55** and the six-day opening period is **29–48**. The implementation uses the actual displayed limit, not a calendar-day prorating formula. The original design below remains the roadmap.
 

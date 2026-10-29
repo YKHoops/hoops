@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from collection_state import atomic_json
 from lineup_optimizer import analyze, validate
 from workspace import ROOT
+METHOD_VERSION='lineup-2'
 
 
 def digest(data):
@@ -41,16 +42,33 @@ def public_input(data):
 
 def build(root=ROOT):
     folder=root/'private/lineup_snapshots'; manifest=folder/'approved.json'
-    bundle={'schema_version':1,'method_version':'lineup-1','teams':[],
+    bundle={'schema_version':1,'method_version':METHOD_VERSION,'teams':[],
             'method':'90% current YK FP/G + 10% GP-weighted prior three seasons; maximize projected points within the cap'}
+    cached={}
+    try:
+        index=json.loads((root/'docs/data/lineups.json').read_text())
+        old=json.loads((root/'docs'/index['path']).read_text())
+        if old.get('method_version')==METHOD_VERSION and digest(old)==index['sha256']:
+            cached={e['input_sha256']:e for e in old['teams']}
+    except (OSError,ValueError,KeyError):pass
+    keys=set()
     if manifest.exists():
         for relative in json.loads(manifest.read_text())['paths']:
             if Path(relative).name!=relative: raise ValueError('Input must be a local snapshot filename')
             data=public_input(json.loads((folder/relative).read_text()))
+            key=(data['owner'],data['season'],data['period']['id'])
+            if key in keys: raise ValueError('Duplicate team/season/period input')
+            keys.add(key)
+            if digest(data) in cached:
+                bundle['teams'].append(cached[digest(data)]);continue
             entry={'input':data,'input_sha256':digest(data),'scenarios':{}}
             for key,conditional in [('conservative',False),('returns',True)]:
                 entry['scenarios'][key]=analyze(data,conditional=conditional)
+                for field in ['minimum_players','preserve_95']:
+                    result=entry['scenarios'][key][field]
+                    entry['scenarios'][key][field]={k:v for k,v in result.items() if k not in ['assignments','active_placements']}
             bundle['teams'].append(entry)
+            print('Solved',data['team_name'],data['period']['id'],flush=True)
     checksum=digest(bundle);path='data/lineups/'+checksum+'.json'
     atomic_json(root/'docs'/path,bundle)
     # Stable index is the final commit point. Immutable old plans stay readable.

@@ -25,7 +25,9 @@ Full existing regression checks remain in the complete workspace; they require i
 
 ## Lineup planner
 
-The current-roster release adds `lineup_optimizer.py`, `import_lineup_evidence.py` and `build_lineups.py`. See `LINEUP_SETTING_README.md` for the reviewed input contract, actual period limits, refresh process and remaining scope. The repository contains only the selected public bundle; raw authenticated captures remain in the evidence workspace.
+The current-roster release adds `lineup_optimizer.py`, `import_lineup_evidence.py`, `import_lineup_league.py` and `build_lineups.py`. See `LINEUP_SETTING_README.md` for the reviewed input contract, actual period limits, refresh process and remaining scope. The repository contains only the selected public bundle; raw authenticated captures remain in the evidence workspace.
+
+The league-wide release includes all ten reviewed rosters, the current matchup and four upcoming weeks through November 29. `import_lineup_league.py` accepts the explicitly reviewed league capture, audits changed membership, and replaces the selected input manifest only after validation. The builder caches verified results by input digest and solver method version.
 
 Install `requirements-lineup.txt` in a virtual environment and run with that interpreter. Full offline rebuild additionally needs the existing collector dependencies (including requests). When invoking the public checkout tools, set `YK_DASHBOARD_WORKSPACE` to the complete evidence workspace:
 

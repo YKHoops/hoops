@@ -139,4 +139,44 @@ class LineupTests(unittest.TestCase):
             with self.assertRaises((ValueError,KeyError)):build(root)
             self.assertEqual(index.read_text(),'last good')
 
+    def test_snapshot_filenames_include_team_and_season(self):
+        from import_lineup_evidence import input_filename
+        a={'owner':'A','season':'2026-27','period':{'id':'2026-11-02'}}
+        b={**a,'owner':'B'};c={**a,'season':'2025-26'}
+        self.assertEqual(len({input_filename(a),input_filename(b),input_filename(c)}),3)
+
+    def test_all_published_team_periods_have_legal_assignments(self):
+        index=ROOT/'docs/data/lineups.json'
+        if not index.exists():self.skipTest('Published fixture absent')
+        bundle=json.loads((ROOT/'docs'/json.loads(index.read_text())['path']).read_text())
+        seen=set()
+        for entry in bundle['teams']:
+            data=entry['input'];validate(data)
+            key=(data['owner'],data['season'],data['period']['id'])
+            self.assertNotIn(key,seen);seen.add(key)
+            players={p['id']:p for p in data['players']}
+            for scenario,analysis in entry['scenarios'].items():
+                for field in ['best','reach']:
+                    plan=analysis[field];assignments=plan['assignments']
+                    self.assertEqual(len(assignments),plan['games'])
+                    self.assertLessEqual(plan['games']+data['period']['credited_gp']+data['period']['reserved_gp'],data['period']['cap'])
+                    self.assertEqual(len({(a['player_id'],a['date']) for a in assignments}),len(assignments))
+                    self.assertEqual(len({(a['slot'],a['date']) for a in assignments}),len(assignments))
+                    for a in assignments:
+                        p=players[a['player_id']];self.assertIn(p['status'],['ACTIVE','RESERVE']);self.assertIn(a['slot'],p['eligible_slots'])
+                        g=next(g for g in p['games'] if g['date']==a['date'])
+                        self.assertIn(g['availability'],['available','conditional'] if scenario=='returns' else ['available'])
+
+    def test_injury_import_and_reviewed_membership(self):
+        from import_lineup_evidence import normalize
+        p=ROOT/'private/lineup_snapshots/2026-10-29-reviewed.json'
+        if not p.exists():self.skipTest('Reviewed fixture absent')
+        raw=json.loads(p.read_text());dashboard=json.loads((ROOT/'docs/data/dashboard.json').read_text())
+        raw['rows'][0][7]='Out For Season - Expected return Oct 1'
+        raw['rows'][1][7]='Injury status unresolved'
+        d=normalize(raw,dashboard)
+        for player in d['players'][:2]:self.assertTrue(all(g['availability']=='out' for g in player['games']))
+        with self.assertRaisesRegex(ValueError,'Unreviewed roster identity'):
+            normalize(raw,dashboard,reviewed_membership=[])
+
 if __name__=='__main__':unittest.main()

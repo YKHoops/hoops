@@ -4,7 +4,9 @@ No endpoint probing, credential use, or public publication. Ambiguous identities
 and incomplete schedules fail before promotion. See LINEUP_SETTING_README.md.
 """
 import argparse
+import hashlib
 import json
+import re
 from datetime import datetime, date, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -14,7 +16,7 @@ from lineup_optimizer import blend, validate, SLOTS
 from workspace import ROOT
 
 
-def normalize(raw, dashboard):
+def normalize(raw, dashboard, reviewed_membership=None):
     identity=Identity(); season=raw['season']; start_year=int(season[:4])
     observed_day=datetime.fromisoformat(raw['as_of']).astimezone(ZoneInfo('America/New_York')).date()
     planning_day=date.fromisoformat(raw['period'].get('planning_start',raw['period']['start']))
@@ -22,7 +24,7 @@ def normalize(raw, dashboard):
     planning_week=planning_day-timedelta(days=planning_day.weekday())
     allowance=raw['claims_remaining_observed'] if planning_week==observed_week else 4 if planning_week>observed_week else None
     roster=dashboard['rosters_by_season'][season]['by_owner'][raw['owner']]
-    expected={p['player_id'] for p in roster}; players=[]
+    expected=set(reviewed_membership) if reviewed_membership is not None else {p['player_id'] for p in roster}; players=[]
     prior=[f'{y}-{str(y+1)[-2:]}' for y in range(start_year-3,start_year)]
     historical={s:{p['player_id']:p for p in dashboard['nba_stats']['seasons'].get(s,{}).get('rows',[])} for s in prior}
     game_ids=[r[0] for r in raw['games']]
@@ -35,15 +37,17 @@ def normalize(raw, dashboard):
             h=historical[s].get(pid)
             if h: history.append({'season':s,'gp':h['gp'],'fp_pg':h['per_game'].get('fp')})
         return_date=None
-        if injury:
-            text=injury.split('Expected return ',1)[1]
+        match=re.search(r'Expected return ([A-Za-z]{3} \d{1,2})',injury or '')
+        if match and 'Out For Season' not in injury:
+            text=match.group(1)
             ret=datetime.strptime(text+' '+str(start_year),'%b %d %Y').date()
             if ret.month<7: ret=ret.replace(year=start_year+1)
             return_date=ret.isoformat()
         games=[]
         for gid,day,time,away,home in raw['games']:
+            if not raw['period'].get('planning_start',raw['period']['start']) <= day <= raw['period']['end']: continue
             if team not in [away,home]: continue
-            availability='available' if not injury else 'out' if day < return_date else 'conditional'
+            availability='available' if not injury else 'out' if not return_date or day < return_date else 'conditional'
             games.append({'id':gid,'date':day,'start':datetime.fromisoformat(day+'T'+time).replace(tzinfo=ZoneInfo('America/New_York')).isoformat(),
                           'opponent':('@'+home if team==away else away),'availability':availability})
         status={'Res':'RESERVE','IR':'IR','Min':'MINORS'}.get(slot,'ACTIVE')
@@ -54,7 +58,7 @@ def normalize(raw, dashboard):
     if {p['id'] for p in players}!=expected or len(players)!=len(expected): raise ValueError('Roster capture must reconcile completely')
     result={'schema_version':1,'as_of':raw['as_of'],'owner':raw['owner'],'team_name':raw['team_name'],'season':season,
             'period':raw['period'],'period_evidence':raw.get('period_evidence',[]),'rules':{'slots':SLOTS,'max_main':20,'max_reserve':10},'players':players,
-            'sources':[{'label':'Fantrax roster, Trends, Schedule – Week','url':raw['source'],'as_of':raw['as_of']},
+            'sources':[{'label':'Fantrax roster, Trends, Schedule and Min/Max','url':raw['source'],'as_of':raw['as_of']},
                        {'label':'Previous three seasons · saved YK production','as_of':dashboard['nba_stats'].get('built_at')}],
             'assumptions':[f"Fantrax Min/Max verifies period {raw['period']['fantrax_period']}, {raw['period']['start']}–{raw['period']['end']}: minimum {raw['period']['minimum']} and maximum {raw['period']['cap']}. Calendar-day prorating is not assumed.",
                            'Flex slots accept all observed basketball positions. Individual eligibility comes from the league roster view.',
@@ -68,11 +72,16 @@ def normalize(raw, dashboard):
     validate(result);return result
 
 
+def input_filename(data):
+    owner=hashlib.sha256((data['season']+'|'+data['owner']).encode()).hexdigest()[:16]
+    return f"input-{owner}-{data['period']['id']}.json"
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('capture',type=Path);args=parser.parse_args()
     raw=json.loads(args.capture.read_text());d=json.loads((ROOT/'docs/data/dashboard.json').read_text())
     normalized=normalize(raw,d)
-    destination=ROOT/'private/lineup_snapshots'/('input-'+normalized['period']['id']+'.json')
+    destination=ROOT/'private/lineup_snapshots'/input_filename(normalized)
     atomic_json(destination,normalized)
     manifest=ROOT/'private/lineup_snapshots/approved.json'
     paths=json.loads(manifest.read_text())['paths'] if manifest.exists() else []
