@@ -34,6 +34,7 @@ function dailyForPlan(analysis,plan){return analysis.daily.map(day=>{
  return {...day,bench:[...eligible].filter(id=>!started.has(id)).map(player_id=>({player_id,reason:'Bench · selected objective/cap or position fit'}))};
 });}
 function staleInput(input){return Date.now()-Date.parse(input.as_of)>24*3600*1000||input.players.some(p=>p.games.some(g=>!g.settled&&!('locked_slot' in g)&&Date.parse(g.start)<=Date.now()));}
+function selectPeriod(available,requested,today){return available.find(t=>t.input.period.id===requested)||available.find(t=>t.input.period.start<=today&&t.input.period.end>=today)||available.find(t=>t.input.period.start>today)||available.at(-1);}
 async function init(){
  try{
   const r=await fetch('data/lineups.json');if(!r.ok)throw Error('Lineup snapshots have not been built.');const index=await r.json();
@@ -54,7 +55,7 @@ function page(c){
  context.effectiveOwner=owner;
  const available=(bundle?.teams||[]).filter(t=>t.input.owner===owner&&t.input.season===year).sort((a,b)=>a.input.period.start.localeCompare(b.input.period.start));
  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
- const entry=available.find(t=>t.input.period.id===params.get('period'))||available.find(t=>t.input.period.start>today)||available.at(-1);
+ const entry=selectPeriod(available,params.get('period'),today);
  const covered=new Set((bundle?.teams||[]).filter(t=>t.input.season===year).map(t=>t.input.owner)).size;
  const head=`<div class="lu-heading"><div><a class="lu-back" href="${url('team.html',{owner})}">← Team dashboard</a><div class="eyebrow muted">TEAM PLANNING</div><h1>Lineup setting</h1><p>Find your best starts. See where the roster has room.</p></div><label class="lu-team">Your team<select id="lineup-owner">${owners.map(o=>`<option value="${esc(o.real_name)}" ${owner===o.real_name?'selected':''}>${esc(teamName(o.real_name))}</option>`).join('')}</select><small>${covered} teams with verified inputs</small></label></div>`;
  if(!entry)return `<div class="lu">${head}${box('Lineup data unavailable','',`<p class="lu-body">${esc(error||'No verified schedule and roster capture is available for this team and season.')}</p><div class="lu-links">${(bundle?.teams||[]).filter((t,i,all)=>all.findIndex(x=>x.input.owner===t.input.owner&&x.input.season===t.input.season)===i).map(t=>`<a class="btn" href="${url('lineup.html',{owner:t.input.owner,season:t.input.season})}">${esc(t.input.team_name)} · ${esc(t.input.season)}</a>`).join('')}</div>`)}</div>`;
@@ -95,6 +96,6 @@ function bind(){
   context.render();document.querySelector(`[data-retain="${el.dataset.retain}"][data-choice="${el.dataset.choice}"]`)?.focus({preventScroll:true});
  }));
 }
-const api={init,page,bind,usage,protectedReason,dailyForPlan,usageBreakdown,weeklyUsage,automaticProtection};
+const api={init,page,bind,usage,protectedReason,dailyForPlan,usageBreakdown,weeklyUsage,automaticProtection,selectPeriod};
 if(typeof module!=='undefined')module.exports=api;else root.YKLineup=api;
 })(typeof window==='undefined'?this:window);

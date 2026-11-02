@@ -167,6 +167,24 @@ class LineupTests(unittest.TestCase):
                         g=next(g for g in p['games'] if g['date']==a['date'])
                         self.assertIn(g['availability'],['available','conditional'] if scenario=='returns' else ['available'])
 
+    def test_published_inputs_reconcile_to_approved_manifest(self):
+        from build_lineups import public_input, digest
+        folder=ROOT/'private/lineup_snapshots'
+        if not (folder/'approved.json').exists():self.skipTest('Private reviewed inputs absent')
+        index=json.loads((ROOT/'docs/data/lineups.json').read_text())
+        bundle=json.loads((ROOT/'docs'/index['path']).read_text())
+        self.assertEqual(digest(bundle),index['sha256'])
+        expected=[public_input(json.loads((folder/p).read_text())) for p in json.loads((folder/'approved.json').read_text())['paths']]
+        self.assertEqual({digest(d) for d in expected},{e['input_sha256'] for e in bundle['teams']})
+        self.assertEqual(len(expected),len(bundle['teams']))
+        period_members={}
+        for entry in bundle['teams']:
+            d=entry['input'];self.assertEqual(digest(d),entry['input_sha256'])
+            key=(d['season'],d['period']['id']);seen=period_members.setdefault(key,set())
+            ids={p['id'] for p in d['players']}
+            self.assertFalse(ids.intersection(seen));seen.update(ids)
+            self.assertEqual(len(ids),len(d['players']))
+
     def test_injury_import_and_reviewed_membership(self):
         from import_lineup_evidence import normalize
         p=ROOT/'private/lineup_snapshots/2026-10-29-reviewed.json'

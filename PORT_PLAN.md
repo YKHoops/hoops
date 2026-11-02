@@ -1,3 +1,17 @@
+# Current-data follow-up · November 2, 2026
+
+Supersedes the retained October 29 lineup snapshot noted in the morning refresh below. The approved design is unchanged.
+
+- Refreshed all ten Fantrax rosters, lineup eligibility/status, injuries/expected returns, YTD FP/G and GP, rostered percentages, and weekly claims remaining. All 247 unique IDs exactly match a second public roster check at 17:44 UTC, including a roster change after the morning snapshot. Scoring, season and team IDs are unchanged.
+- Rebuilt 40 team/matchup plans: November 2–8, 9–15, 16–22 and 23–29. Expired October 26 plans leave the active selector; immutable old bundles remain available. All 204 scheduled NBA games across 30 teams were rechecked. Current credited GP is verified at zero; matchup caps are 48, 55, 55 and 48. The November 30–December 13 matchup is not included because a complete schedule for that whole period has not been captured.
+- Planner averages use the fresh Fantrax YTD scoring view. All 228 roster players with observed NBA games reconcile on GP. Eleven have small FP-total differences (1–3 points) from the independent box-score source; those sources are kept distinct and the differences are recorded privately. The 19 remaining roster players have zero observed GP. NBA results remain complete through November 1: 92 games / 442 players. Standings remain reconciled through Week 2.
+- Retried Dizzle and 9cat once successfully. Both 450-player dynasty lists and the 200-player full-season category list are unchanged; October 13/14 publication dates and last successful public snapshots are preserved. Other ranking sources were already checked in today's weekly run. Historical grade inputs and unresolved pick outcomes remain historical/unknown, not relabeled as fresh.
+- Validation: approved-input hashes and unique membership reconcile; all 160 points/max-games scenario solutions are optimal and legal. Existing historical fixtures remain unchanged. 64 Python and 29 JavaScript checks pass. Desktop 1280px and mobile 390px controls have no page overflow or runtime errors. Repeat offline rebuild changed zero files. A regression-tested fix makes the planner default to the current matchup instead of skipping to the following week; explicit selections still work. Raw authenticated evidence, budgets and pending claims are excluded from public assets.
+
+Private captures, source comparisons, validation and publication receipt: `yk_working_copy/private/weekly_runs/2026-11-02/stale-refresh/`. Refresh lineups with current roster, injury, period and schedule evidence on future runs; do not change snapshot dates without collecting those inputs.
+
+---
+
 # Weekly refresh · November 2, 2026
 
 Reviewed for the authorized YKHoops/hoops main / docs publication. The approved interface, trade features and lineup planner are preserved.

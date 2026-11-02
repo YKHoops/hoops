@@ -1,5 +1,16 @@
 const test=require('node:test');const assert=require('node:assert/strict');
 const {usage,protectedReason,dailyForPlan}=require('../docs/js/lineup-ui.js');
+test('refresh defaults to current matchup while preserving explicit future selections',()=>{
+ const {selectPeriod}=require('../docs/js/lineup-ui.js');
+ const entries=['02','09','16'].map((day,i)=>({input:{period:{id:`2026-11-${day}`,start:`2026-11-${day}`,end:`2026-11-${['08','15','22'][i]}`}}}));
+ assert.equal(selectPeriod(entries,null,'2026-11-02'),entries[0]);
+ assert.equal(selectPeriod(entries,'expired','2026-11-08'),entries[0]);
+ assert.equal(selectPeriod(entries,null,'2026-11-09'),entries[1]);
+ assert.equal(selectPeriod(entries,'2026-11-16','2026-11-02'),entries[2]);
+ assert.equal(selectPeriod(entries,null,'2026-11-01'),entries[0]);
+ assert.equal(selectPeriod(entries,null,'2026-11-23'),entries[2]);
+ assert.equal(selectPeriod([],null,'2026-11-02'),undefined);
+});
 test('70 percent cutoff and manual protection cannot be bypassed',()=>{
  const p={id:'A',rostered_pct:70};assert.equal(protectedReason(p,new Set(),false),null);
  p.rostered_pct=70.01;assert.equal(protectedReason(p,new Set(),false),'Over 70% rostered');

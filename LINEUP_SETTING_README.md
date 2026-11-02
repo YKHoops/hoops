@@ -1,3 +1,7 @@
+## November 2, 2026 refresh
+
+Current capture: 247 players across ten teams, 40 team/matchup plans through November 29. Fresh Fantrax averages, injuries, positions, roster percentages and claims counters replace October 29 inputs. Four complete matchups are available; the expired October 26 week is removed. November 30–December 13 awaits complete schedule evidence. Current period 3 has 0 credited GP and a 48-game cap. The next caps are 55, 55 and 48. NBA box-score statistics remain through November 1. Older coverage below describes the original fixture, not the current capture.
+
 # Lineup setting — league-wide planning
 
 Updated October 29, 2026. The planner covers all 10 teams and 251 owned players, with 50 team/matchup entries: the remaining current week and four future weeks through November 29. It uses reviewed Fantrax captures and does not submit lineup changes, claims or drops. The static page is published at https://ykhoops.github.io/hoops/lineup.html.
