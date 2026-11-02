@@ -38,3 +38,9 @@ node --test tests/lineup.test.js
 ```
 
 No command above publishes the website or modifies Fantrax.
+
+Weekly refresh ranking checks (including retained private baseline fixtures):
+
+```sh
+YK_DASHBOARD_WORKSPACE=/Users/Mattzujewski/Projects/fun_coding/Fantasy_Basketball/yk_working_copy node --test tests/rankings.test.js
+```

@@ -174,9 +174,21 @@ class LineupTests(unittest.TestCase):
         raw=json.loads(p.read_text());dashboard=json.loads((ROOT/'docs/data/dashboard.json').read_text())
         raw['rows'][0][7]='Out For Season - Expected return Oct 1'
         raw['rows'][1][7]='Injury status unresolved'
-        d=normalize(raw,dashboard)
+        # This is the October 29 fixture, not today's roster. Use the separately
+        # reviewed membership for that capture; weekly claims/drops must not
+        # rewrite the historical regression or bypass the importer's guard.
+        league=json.loads((ROOT/'private/lineup_snapshots/2026-10-29-league-reviewed.json').read_text())
+        membership=league['teams'][raw['team_name']]['reviewed_player_ids']
+        self.assertEqual(len(membership),26)
+        d=normalize(raw,dashboard,reviewed_membership=membership)
+        self.assertEqual({p['id'] for p in d['players']},set(membership))
         for player in d['players'][:2]:self.assertTrue(all(g['availability']=='out' for g in player['games']))
         with self.assertRaisesRegex(ValueError,'Unreviewed roster identity'):
             normalize(raw,dashboard,reviewed_membership=[])
+        changed=copy.deepcopy(dashboard)
+        changed['rosters_by_season'][raw['season']]['by_owner'][raw['owner']]=[
+            {'player_id':pid} for pid in membership[1:]]
+        with self.assertRaisesRegex(ValueError,'Unreviewed roster identity'):
+            normalize(raw,changed)
 
 if __name__=='__main__':unittest.main()
