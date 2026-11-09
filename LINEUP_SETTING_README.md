@@ -1,3 +1,7 @@
+## November 9, 2026 refresh
+
+Current capture: 247 players across ten teams; 30 team/matchup plans through November 29. Fresh Fantrax stats, injuries, eligibility, ownership percentages and weekly claims counters replace November 2 inputs. Current period 4 has zero credited GP and a 55-game cap; upcoming caps are 55 and 48. All 150 scheduled NBA games were rechecked, including two corrected November 17 times. Later periods still require complete reviewed schedule evidence. NBA box-score statistics are through November 8 (146 games / 461 players). Older sections below describe historical captures.
+
 ## November 2, 2026 refresh
 
 Current capture: 247 players across ten teams, 40 team/matchup plans through November 29. Fresh Fantrax averages, injuries, positions, roster percentages and claims counters replace October 29 inputs. Four complete matchups are available; the expired October 26 week is removed. November 30–December 13 awaits complete schedule evidence. Current period 3 has 0 credited GP and a 48-game cap. The next caps are 55, 55 and 48. NBA box-score statistics remain through November 1. Older coverage below describes the original fixture, not the current capture.

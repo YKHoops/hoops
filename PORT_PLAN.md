@@ -1,3 +1,16 @@
+# Weekly refresh · November 9, 2026
+
+- **NBA:** 146 completed regular-season games / 461 players through November 8, America/New_York, up from 92 / 442. Refreshed November 1–7 and November 8 with correction overlap and bounded requests. All collected player points reconcile to official game scores.
+- **League:** verified `noz9r7uxmphcb74p`, 2026–27, unchanged scoring, roster rules and team IDs. All 247 unique players across ten teams reconcile to authenticated roster views and a final public check. Existing owner mappings remain verified evidence; the blocked owner endpoint was not rediscovered. Week 3 adds five completed matchups: 15 current / 335 total, reconciled to official W/L/T and points for/against. Week 4 remains in progress.
+- **Rankings:** promoted Hashtag dynasty (392 players, November 7), Smart Draft Board points (25, November 9), and Hashtag category ROS / separate YK ROS model (30, November 9). The changed 200-player 9cat list retains its October 14 publication date; capture time does not imply new publication. Dizzle's two 450-player lists, NBC and RotoWire are unchanged. All 1,287 Fantrax projection rows were reviewed: the 574 positive-GP values are unchanged and retain October 21 capture-only provenance. Manual sources and blocked Yahoo evidence remain intact. Formats, horizons and independent models stay separate.
+- **Lineups:** fresh November 9 rosters, positions, injuries, YTD averages, ownership percentages and claims counters rebuild 30 team/matchup plans for November 9–15, 16–22 and 23–29. All 150 games across 30 NBA teams were reviewed; two November 17 game times were corrected. Caps are 55 / 55 / 48, with zero current credited GP for every team. All 232 rostered players with NBA appearances reconcile on GP; twelve small fantasy-point differences (1–3 points) remain source-specific. Fifteen players have no observed GP. Later periods await complete reviewed schedule evidence; no lineups or transactions were submitted.
+- **Retained uncertainty:** executed trades remain 31 current-season rows / 390 canonical transfers / 146 events. The 138 archive grade records remain 136 linked plus two aliases, with 25 uncertain side attributions. Historical pick outcomes and repaired paired-season grades remain unresolved; dates are not relabeled as fresh.
+- **Validation:** 64 Python and 29 JavaScript checks pass, preserving October 21 baseline fixtures and refreshed source-reconciled checks. All 120 lineup scenario/objective solutions are optimal and legal. Repeat offline rebuild changes zero files. Desktop 1280px filtering and mobile 390px lineup controls pass without page overflow. The initial local preview was unavailable after interruption; restarting its server restored loading. No runtime failures occurred after recovery. Approved design and collectors are unchanged.
+
+Private captures, comparisons, test logs and publication receipt: `yk_working_copy/private/weekly_runs/2026-11-09/`. Next NBA refresh starts November 8 for correction overlap through the previous New York day, in batches of at most seven dates. Raw authenticated evidence and credentials remain excluded from public assets.
+
+---
+
 # Current-data follow-up · November 2, 2026
 
 Supersedes the retained October 29 lineup snapshot noted in the morning refresh below. The approved design is unchanged.
